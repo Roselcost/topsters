@@ -1,0 +1,51 @@
+.options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.label {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  padding: 0 8px;
+  height: 32px;
+  box-sizing: border-box;
+  font-size: 14px;
+  padding: 12px;
+  border: 1px solid var(--borderColor);
+  box-shadow: 2px 2px 2px var(--shadowColor);
+  border-radius: 4px;
+  background-color: var(--backgroundColor);
+  position: relative;
+  transition-duration: 0.2s;
+}
+
+.label:hover {
+  transition-duration: 0.2s;
+  border: 1px solid var(--textColor);
+}
+
+.checked,
+input[type="radio"]:checked + .label,
+input[type="checkbox"]:checked + .label {
+  transition-duration: 0.2s;
+  background-color: var(--accentColor4);
+}
+
+.checked:hover,
+input[type="radio"]:checked:hover + .label,
+input[type="checkbox"]:checked:hover + .label {
+  transition-duration: 0.2s;
+  border: 1px solid var(--textColor);
+}
+
+.icon {
+  width: 16px;
+}
+
+html[dark] .icon {
+  filter: invert(1);
+}

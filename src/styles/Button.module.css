@@ -1,0 +1,28 @@
+.button {
+  min-width: 60px;
+  height: 32px;
+  display: flex;
+  font-size: 14px;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  box-shadow: 2px 2px 2px var(--shadowColor);
+  background-color: var(--backgroundColor);
+  border-radius: 4px;
+  border: 1px solid var(--borderColor);
+  color: var(--textColor);
+  padding: 0 12px;
+  transition-duration: 0.2s;
+  font-family: "Lato";
+}
+
+.selected {
+  transition-duration: 0.2s;
+  background-color: var(--accentColor4);
+  border: 1px solid var(--borderColor);
+}
+
+.button:hover {
+  transition-duration: 0.2s;
+  border: 1px solid var(--textColor);
+}

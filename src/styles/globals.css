@@ -1,0 +1,97 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  --textColor: rgb(48, 48, 48);
+  --tabColor: rgb(39, 39, 39);
+  --backgroundColor: rgba(222, 225, 227);
+  --transparentBackgroundColor: rgba(173, 188, 194, 0.388);
+  --accentColor: rgb(185, 225, 255);
+  --accentColor2: rgb(37, 132, 172);
+  --accentColor3: rgb(224, 242, 255);
+  --accentColor4: rgb(198, 214, 225);
+  --borderColor: rgba(146, 148, 149);
+  --shadowColor: rgba(0, 0, 0, 0.134);
+  min-height: 100dvh;
+  user-select: none;
+  font-family: "Courier New", Courier, monospace;
+  font-family: "Lato";
+  color: rgb(48, 48, 48);
+  background-color: rgb(196, 207, 209);
+  background-image: radial-gradient(
+    at left,
+    rgb(201, 201, 201),
+    rgb(203, 226, 229)
+  );
+}
+
+html[dark] body {
+  --textColor: rgb(178, 178, 178);
+  --tabColor: #d9d9d9;
+  --backgroundColor: rgb(35, 35, 35);
+  --transparentBackgroundColor: rgba(56, 63, 67, 0.171);
+  --accentColor: rgb(36, 60, 91);
+  --accentColor2: rgb(12, 126, 174);
+  --accentColor3: rgb(8, 19, 34);
+  --accentColor4: rgb(19, 25, 30);
+  --borderColor: rgb(54, 54, 54);
+  --shadowColor: rgba(0, 0, 0, 0.324);
+  color: rgb(178, 178, 178);
+  background-color: rgb(13, 17, 20);
+  background-image: radial-gradient(at left, rgb(12, 12, 12), rgb(17, 25, 30));
+}
+
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+  font-weight: unset;
+}
+p {
+  text-wrap: pretty;
+  margin-block: 1em;
+  text-align: justify;
+  line-height: 1.5;
+}
+ol,
+ul {
+  list-style: none;
+}
+
+a,
+a:visited {
+  text-decoration: none;
+  color: rgb(12, 126, 174);
+}
+
+img,
+svg,
+video {
+  display: block;
+  height: auto;
+  max-width: 100%;
+}
+
+input:focus-visible {
+  outline: var(--textColor) solid 1px;
+}
+
+@font-face {
+  font-family: Lato;
+  src: url("/Lato-Light.ttf");
+}
+
+.animate-opacity {
+  animation: fade-opacity 0.2s ease-out forwards;
+}
+
+@keyframes fade-opacity {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
