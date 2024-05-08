@@ -1157,7 +1157,7 @@ export default function Home() {
                                   </span>
                                 </div>
                               )}
-                              {game.cover && (
+                              {game.cover && !draggingItem.item.cover && (
                                 <>
                                   <div
                                     id="remove"
@@ -1181,30 +1181,28 @@ export default function Home() {
                                       src="/icons/remove.svg"
                                     ></img>
                                   </div>
-                                  {!draggingItem.item.cover && (
-                                    <div
-                                      onClick={(e: any) => {
-                                        if (e?.target?.id !== "remove") {
-                                          if (draggingItem.item.index === -1) {
-                                            if (!!game.title) {
-                                              setDraggingItem({
-                                                item: { ...game, index: i },
-                                                origin: "collection",
-                                              });
-                                            }
-                                          } else {
-                                            onDrop(i);
+                                  <div
+                                    onClick={(e: any) => {
+                                      if (e?.target?.id !== "remove") {
+                                        if (draggingItem.item.index === -1) {
+                                          if (!!game.title) {
+                                            setDraggingItem({
+                                              item: { ...game, index: i },
+                                              origin: "collection",
+                                            });
                                           }
+                                        } else {
+                                          onDrop(i);
                                         }
-                                      }}
-                                      className={styles.move}
-                                    >
-                                      <img
-                                        className={styles.icon}
-                                        src="/icons/drag.svg"
-                                      ></img>
-                                    </div>
-                                  )}
+                                      }
+                                    }}
+                                    className={styles.move}
+                                  >
+                                    <img
+                                      className={styles.icon}
+                                      src="/icons/drag.svg"
+                                    ></img>
+                                  </div>
                                 </>
                               )}
                               {!!game.cover && (
