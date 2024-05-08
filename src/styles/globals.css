@@ -95,3 +95,35 @@ input:focus-visible {
     opacity: 1;
   }
 }
+
+html[dark] .added:before {
+  filter: invert(1);
+  background-color: var(--textColor);
+}
+
+.added:before {
+  content: "";
+  background-image: url("/icons/add.svg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 50px;
+  background-color: var(--backgroundColor);
+  border-radius: 8px;
+  filter: invert(0);
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  animation: fade-opacity2 0.5s ease-out forwards;
+}
+
+@keyframes fade-opacity2 {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}

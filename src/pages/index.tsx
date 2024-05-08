@@ -162,7 +162,7 @@ export default function Home() {
   const titlesPosition = useSelector((state: State) => state.titlesPosition);
   const games = useSelector((state: State) => state.games);
   const [searchedGames, setSearchedGames] = useState<
-    { title: ""; cover: "" }[]
+    { title: string; cover: string }[]
   >([]);
   return (
     <>
@@ -286,7 +286,10 @@ export default function Home() {
                             .filter((game) => !!game.cover)
                             .map((game, i) => {
                               return (
-                                <div key={i} className={styles.cover}>
+                                <div
+                                  key={i + game.title}
+                                  className={styles.cover}
+                                >
                                   <Image
                                     draggable={true}
                                     onDragStart={() => {
@@ -296,6 +299,7 @@ export default function Home() {
                                       });
                                     }}
                                     onDragEnd={() => {
+                                      setHoverItem(-1);
                                       setDraggingItem({
                                         item: {
                                           title: "",
@@ -305,11 +309,16 @@ export default function Home() {
                                         origin: "",
                                       });
                                     }}
-                                    onClick={() =>
+                                    onClick={(e) => {
                                       dispatch(
                                         addGame({ game: game, index: -1 })
-                                      )
-                                    }
+                                      );
+                                      const ref = e.currentTarget.parentElement;
+                                      ref?.classList.add("added");
+                                      setTimeout(() => {
+                                        ref?.classList.remove("added");
+                                      }, 500);
+                                    }}
                                     src={game.cover && "https:" + game.cover}
                                     alt="Cover"
                                     width={80}
@@ -1110,7 +1119,8 @@ export default function Home() {
                                   }
                                 }
                               }}
-                              onDragEnd={() =>
+                              onDragEnd={() => {
+                                setHoverItem(-1);
                                 setDraggingItem({
                                   item: {
                                     title: "",
@@ -1118,8 +1128,8 @@ export default function Home() {
                                     index: -1,
                                   },
                                   origin: "",
-                                })
-                              }
+                                });
+                              }}
                             >
                               {!game.cover && (
                                 <div
@@ -1148,28 +1158,54 @@ export default function Home() {
                                 </div>
                               )}
                               {game.cover && (
-                                <div
-                                  id="remove"
-                                  onClick={() => {
-                                    dispatch(removeGame(i));
-                                    setHoverItem(-1);
-                                    setDraggingItem({
-                                      item: {
-                                        title: "",
-                                        cover: "",
-                                        index: -1,
-                                      },
-                                      origin: "",
-                                    });
-                                  }}
-                                  className={styles.delete}
-                                >
-                                  <img
+                                <>
+                                  <div
                                     id="remove"
-                                    className={styles.icon}
-                                    src="/icons/remove.svg"
-                                  ></img>
-                                </div>
+                                    onClick={() => {
+                                      dispatch(removeGame(i));
+                                      setHoverItem(-1);
+                                      setDraggingItem({
+                                        item: {
+                                          title: "",
+                                          cover: "",
+                                          index: -1,
+                                        },
+                                        origin: "",
+                                      });
+                                    }}
+                                    className={styles.delete}
+                                  >
+                                    <img
+                                      id="remove"
+                                      className={styles.icon}
+                                      src="/icons/remove.svg"
+                                    ></img>
+                                  </div>
+                                  {!draggingItem.item.cover && (
+                                    <div
+                                      onClick={(e: any) => {
+                                        if (e?.target?.id !== "remove") {
+                                          if (draggingItem.item.index === -1) {
+                                            if (!!game.title) {
+                                              setDraggingItem({
+                                                item: { ...game, index: i },
+                                                origin: "collection",
+                                              });
+                                            }
+                                          } else {
+                                            onDrop(i);
+                                          }
+                                        }
+                                      }}
+                                      className={styles.move}
+                                    >
+                                      <img
+                                        className={styles.icon}
+                                        src="/icons/drag.svg"
+                                      ></img>
+                                    </div>
+                                  )}
+                                </>
                               )}
                               {!!game.cover && (
                                 <>

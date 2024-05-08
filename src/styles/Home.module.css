@@ -327,6 +327,7 @@ input[type="color"].value:hover {
 .search {
   height: calc(100% - 12px);
   width: 350px;
+  max-width: 100%;
 }
 
 .search-input {
@@ -365,7 +366,12 @@ input[type="color"].value:hover {
 
 .cover {
   cursor: grab;
-  border-radius: 4px;
+  border-radius: 8px;
+  position: relative;
+}
+
+.cover img {
+  border-radius: 8px;
 }
 
 .workspace-content {
@@ -481,8 +487,8 @@ html[dark] .selected-tab .icon {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 24px;
-  height: 24px;
+  width: 32px;
+  height: 32px;
   border-radius: 4px;
   border: 1px solid var(--borderColor);
   cursor: pointer;
@@ -491,6 +497,27 @@ html[dark] .selected-tab .icon {
   position: absolute;
   top: 0;
   left: 0;
+  z-index: 10;
+}
+
+.move {
+  display: none;
+}
+
+.workspace-cover:hover .move {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  border: 1px solid var(--borderColor);
+  cursor: pointer;
+  color: var(--textColor);
+  background-color: var(--backgroundColor);
+  position: absolute;
+  top: 0;
+  right: 0;
   z-index: 10;
 }
 
