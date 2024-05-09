@@ -24,7 +24,6 @@ import {
   setIsCircle,
   setPreset,
   setRows,
-  setShowBorder,
   setShowNumbers,
   setShowShadows,
   setShowTitles,
@@ -37,6 +36,7 @@ import {
   BackgroundType,
   Direction,
   Font,
+  Game,
   Position,
   State,
 } from "@/redux/state";
@@ -45,31 +45,41 @@ import { downloadImage } from "@/components/utils";
 import axios from "axios";
 
 export default function Home() {
-  const onDrop = (index: number) => {
+  const hasData = (game: Game) => {
+    return !!game?.title && !!game?.cover;
+  };
+
+  const resetDrag = () => {
+    setHoverItem(-1);
+    setDraggingItem({
+      item: {
+        title: "",
+        cover: "",
+      },
+      index: -1,
+      origin: "",
+    });
+  };
+
+  const onDrop = (destinationIndex: number) => {
     const dragGame = draggingItem.item;
-    if (!!dragGame.title) {
+    if (hasData(dragGame)) {
       if (draggingItem.origin === "add")
-        dispatch(addGame({ game: dragGame, index }));
+        dispatch(
+          addGame({ game: dragGame, destinationIndex: destinationIndex })
+        );
       else {
         dispatch(
           swapGame({
             game: {
               ...dragGame,
-              index: dragGame.index,
             },
-            index,
+            sourceIndex: draggingItem.index,
+            destinationIndex,
           })
         );
       }
-      setHoverItem(-1);
-      setDraggingItem({
-        item: {
-          title: "",
-          cover: "",
-          index: -1,
-        },
-        origin: "",
-      });
+      resetDrag();
     }
   };
 
@@ -120,8 +130,13 @@ export default function Home() {
     else document.getElementsByTagName("html")[0].setAttribute("dark", "true");
   }, []);
 
-  const [draggingItem, setDraggingItem] = useState({
-    item: { title: "", cover: "", index: -1 },
+  const [draggingItem, setDraggingItem] = useState<{
+    item: Game;
+    index: number;
+    origin: "add" | "collection" | "";
+  }>({
+    item: { title: "", cover: "" },
+    index: -1,
     origin: "",
   });
   const [hoverItem, setHoverItem] = useState(-1);
@@ -150,7 +165,6 @@ export default function Home() {
     (state: State) => state.gradientDirection
   );
   const gap = useSelector((state: State) => state.gap);
-  const showBorder = useSelector((state: State) => state.showBorder);
   const borderColor = useSelector((state: State) => state.borderColor);
   const isCircle = useSelector((state: State) => state.isCircle);
   const borderSize = useSelector((state: State) => state.borderSize);
@@ -283,7 +297,7 @@ export default function Home() {
                       {!!searchedGames.length && (
                         <div className={styles.covers}>
                           {searchedGames
-                            .filter((game) => !!game.cover)
+                            .filter((game) => hasData(game))
                             .map((game, i) => {
                               return (
                                 <div
@@ -294,24 +308,18 @@ export default function Home() {
                                     draggable={true}
                                     onDragStart={() => {
                                       setDraggingItem({
-                                        item: { ...game, index: -1 },
+                                        item: { ...game },
+                                        index: -1,
                                         origin: "add",
                                       });
                                     }}
-                                    onDragEnd={() => {
-                                      setHoverItem(-1);
-                                      setDraggingItem({
-                                        item: {
-                                          title: "",
-                                          cover: "",
-                                          index: -1,
-                                        },
-                                        origin: "",
-                                      });
-                                    }}
+                                    onDragEnd={() => resetDrag()}
                                     onClick={(e) => {
                                       dispatch(
-                                        addGame({ game: game, index: -1 })
+                                        addGame({
+                                          game: game,
+                                          destinationIndex: -1,
+                                        })
                                       );
                                       const ref = e.currentTarget.parentElement;
                                       ref?.classList.add("added");
@@ -319,7 +327,7 @@ export default function Home() {
                                         ref?.classList.remove("added");
                                       }, 500);
                                     }}
-                                    src={game.cover && "https:" + game.cover}
+                                    src={"https:" + game.cover}
                                     alt="Cover"
                                     width={80}
                                     height={0}
@@ -375,8 +383,9 @@ export default function Home() {
                             className={styles.value}
                             onChange={(e: any) => {
                               let reader = new FileReader();
-                              reader.onload = (e: any) => {
-                                dispatch(importState(e));
+                              reader.onload = (ev: any) => {
+                                dispatch(importState(ev));
+                                e.target.value = "";
                               };
                               reader.readAsText(e.target?.files?.[0]);
                             }}
@@ -728,28 +737,21 @@ export default function Home() {
                       <div className={styles.input}>
                         <label className={styles["input-label"]}>Border</label>
                         <div className={styles.values}>
-                          <Button
-                            selected={showBorder}
-                            onClick={() => dispatch(setShowBorder(!showBorder))}
-                          >
-                            {showBorder ? (
-                              <Image
-                                width={10}
-                                height={10}
-                                className={styles.icon}
-                                src="/icons/check.svg"
-                                alt="Check"
-                              ></Image>
-                            ) : (
-                              <Image
-                                width={10}
-                                height={10}
-                                className={styles.icon}
-                                src="/icons/cancel.svg"
-                                alt="Cancel"
-                              ></Image>
-                            )}
-                          </Button>
+                          <input
+                            onChange={(value) => {
+                              dispatch(
+                                setBorderSize(parseInt(value.target.value))
+                              );
+                            }}
+                            className={styles.value}
+                            type="range"
+                            value={borderSize}
+                            min={0}
+                            max={20}
+                          ></input>
+                          <span className={styles["range-value"]}>
+                            {borderSize}
+                          </span>
                         </div>
                       </div>
                       <div className={styles.input}>
@@ -769,26 +771,6 @@ export default function Home() {
                           ></input>
                           <span className={styles["range-value"]}>
                             {borderRadius}
-                          </span>
-                        </div>
-                      </div>
-                      <div className={styles.input}>
-                        <label className={styles["input-label"]}>Size</label>
-                        <div className={styles.values}>
-                          <input
-                            onChange={(value) => {
-                              dispatch(
-                                setBorderSize(parseInt(value.target.value))
-                              );
-                            }}
-                            className={styles.value}
-                            type="range"
-                            value={borderSize}
-                            min={1}
-                            max={20}
-                          ></input>
-                          <span className={styles["range-value"]}>
-                            {borderSize}
                           </span>
                         </div>
                       </div>
@@ -947,41 +929,12 @@ export default function Home() {
                 className={styles["section-title"]}
               >
                 <div className={styles.collection}>
-                  {/* <div className={styles.tab}>
-                      <h2>
-                        <Image
-                          width={10}
-                          height={10}
-                          className={styles.icon}
-                          src="/icons/remove.svg"
-                          alt="Remove"
-                        ></Image>
-                      </h2>
-                    </div> */}
-
-                  {/* <div className={`${styles.tab} ${styles["selected-tab"]}`}>
-                    <select>
-                      <option>{title}</option>
-                    </select>
-                  </div> */}
                   <div
                     style={{ cursor: "unset" }}
                     className={`${styles.tab} ${styles["selected-tab"]}`}
                   >
                     <h2>{!!title ? title : "Untitled"}</h2>
                   </div>
-
-                  {/* <div className={styles.tab}>
-                      <h2>
-                        <Image
-                          width={10}
-                          height={10}
-                          className={styles.icon}
-                          src="/icons/add.svg"
-                          alt="Add"
-                        ></Image>
-                      </h2>
-                    </div> */}
                 </div>
                 <div>
                   <div
@@ -1080,9 +1033,8 @@ export default function Home() {
                             <div
                               key={i}
                               className={`${styles["workspace-cover"]} ${
-                                [draggingItem.item.index, hoverItem].includes(
-                                  i
-                                ) && styles.dragging
+                                [draggingItem.index, hoverItem].includes(i) &&
+                                styles.dragging
                               }`}
                               style={{
                                 minHeight: "100px",
@@ -1098,19 +1050,21 @@ export default function Home() {
                                 e.preventDefault();
                                 setHoverItem(i);
                               }}
-                              draggable={!!game.title}
+                              draggable={hasData(game)}
                               onDragStart={() => {
                                 setDraggingItem({
-                                  item: { ...game, index: i },
+                                  item: { ...game },
+                                  index: i,
                                   origin: "collection",
                                 });
                               }}
                               onClick={(e: any) => {
                                 if (e?.target?.id !== "remove") {
-                                  if (draggingItem.item.index === -1) {
-                                    if (!!game.title) {
+                                  if (draggingItem.index === -1) {
+                                    if (hasData(game)) {
                                       setDraggingItem({
-                                        item: { ...game, index: i },
+                                        item: { ...game },
+                                        index: i,
                                         origin: "collection",
                                       });
                                     }
@@ -1119,19 +1073,9 @@ export default function Home() {
                                   }
                                 }
                               }}
-                              onDragEnd={() => {
-                                setHoverItem(-1);
-                                setDraggingItem({
-                                  item: {
-                                    title: "",
-                                    cover: "",
-                                    index: -1,
-                                  },
-                                  origin: "",
-                                });
-                              }}
+                              onDragEnd={() => resetDrag()}
                             >
-                              {!game.cover && (
+                              {!hasData(game) && (
                                 <div
                                   style={{
                                     backgroundColor: `#ccc`,
@@ -1144,11 +1088,7 @@ export default function Home() {
                                         ? "black 3px 3px 10px 0px"
                                         : "unset"
                                     }`,
-                                    border: `${
-                                      showBorder
-                                        ? `${borderSize}px solid ${borderColor} `
-                                        : "unset"
-                                    }`,
+                                    border: `${borderSize}px solid ${borderColor} `,
                                   }}
                                   className={`${styles.cover} ${styles["no-items"]}`}
                                 >
@@ -1157,21 +1097,13 @@ export default function Home() {
                                   </span>
                                 </div>
                               )}
-                              {game.cover && !draggingItem.item.cover && (
+                              {hasData(game) && draggingItem.index === -1 && (
                                 <>
                                   <div
                                     id="remove"
                                     onClick={() => {
                                       dispatch(removeGame(i));
-                                      setHoverItem(-1);
-                                      setDraggingItem({
-                                        item: {
-                                          title: "",
-                                          cover: "",
-                                          index: -1,
-                                        },
-                                        origin: "",
-                                      });
+                                      resetDrag();
                                     }}
                                     className={styles.delete}
                                   >
@@ -1184,10 +1116,11 @@ export default function Home() {
                                   <div
                                     onClick={(e: any) => {
                                       if (e?.target?.id !== "remove") {
-                                        if (draggingItem.item.index === -1) {
-                                          if (!!game.title) {
+                                        if (draggingItem.index === -1) {
+                                          if (hasData(game)) {
                                             setDraggingItem({
-                                              item: { ...game, index: i },
+                                              item: { ...game },
+                                              index: i,
                                               origin: "collection",
                                             });
                                           }
@@ -1205,31 +1138,24 @@ export default function Home() {
                                   </div>
                                 </>
                               )}
-                              {!!game.cover && (
+                              {hasData(game) && (
                                 <>
                                   <img
                                     className={styles.cover}
                                     style={{
-                                      opacity: `${!!game.title ? "1" : "0"}`,
                                       borderRadius: isCircle
                                         ? "100%"
                                         : borderRadius,
                                       objectFit: isCircle ? "cover" : "contain",
                                       height: `${isCircle ? "100px" : "unset"}`,
-                                      border: `${
-                                        showBorder
-                                          ? `${borderSize}px solid ${borderColor} `
-                                          : "unset"
-                                      }`,
+                                      border: `${borderSize}px solid ${borderColor}`,
                                       boxShadow: `${
                                         showShadows
                                           ? "black 3px 3px 10px 0px"
                                           : "unset"
                                       }`,
                                     }}
-                                    src={
-                                      !!game.cover ? "https:" + game.cover : ""
-                                    }
+                                    src={"https:" + game.cover}
                                     alt="Cover"
                                     width={isCircle ? 100 : 75}
                                     height={isCircle ? 100 : 0}
@@ -1273,7 +1199,7 @@ export default function Home() {
                           }}
                         >
                           {titlesPosition === Position.side &&
-                            !games.some((game) => !!game.title) && (
+                            !games.some((game) => hasData(game)) && (
                               <div className={styles["no-items"]}>
                                 <Image
                                   width={100}
@@ -1293,9 +1219,9 @@ export default function Home() {
                                 const number = showNumbers ? `${i + 1}. ` : "";
                                 const br =
                                   (i + 1) % columns === 0 ? <br></br> : "";
-                                const res = !!game?.title ? (
+                                const res = hasData(game) ? (
                                   <div key={i}>
-                                    <div>{number + game?.title}</div>
+                                    <div>{number + game.title}</div>
                                     {br}
                                   </div>
                                 ) : (

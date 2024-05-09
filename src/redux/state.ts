@@ -9,7 +9,6 @@ export type State = {
   backgroundOpacity: number;
   gradientDirection: Direction;
   gap: number;
-  showBorder: boolean;
   borderColor: string;
   isCircle: boolean;
   borderSize: number;

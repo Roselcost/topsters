@@ -15,6 +15,28 @@ for (let i = 0; i < 100; ++i) {
   gameArray.push({ title: "", cover: "" });
 }
 
+const copy = (targetState: State, sourceState: State) => {
+  targetState.title = sourceState.title;
+  targetState.showTitles = sourceState.showTitles;
+  targetState.rows = sourceState.rows;
+  targetState.columns = sourceState.columns;
+  targetState.backgroundType = sourceState.backgroundType;
+  targetState.backgroundColor1 = sourceState.backgroundColor1;
+  targetState.backgroundColor2 = sourceState.backgroundColor2;
+  targetState.backgroundOpacity = sourceState.backgroundOpacity;
+  targetState.gradientDirection = sourceState.gradientDirection;
+  targetState.gap = sourceState.gap;
+  targetState.borderColor = sourceState.borderColor;
+  targetState.isCircle = sourceState.isCircle;
+  targetState.borderSize = sourceState.borderSize;
+  targetState.borderRadius = sourceState.borderRadius;
+  targetState.showNumbers = sourceState.showNumbers;
+  targetState.showShadows = sourceState.showShadows;
+  targetState.font = sourceState.font;
+  targetState.textColor = sourceState.textColor;
+  targetState.titlesPosition = sourceState.titlesPosition;
+};
+
 const initialState: State = {
   title: "",
   showTitles: true,
@@ -26,7 +48,6 @@ const initialState: State = {
   backgroundOpacity: 16,
   gradientDirection: Direction.right,
   gap: 10,
-  showBorder: false,
   borderColor: "#cccccc",
   isCircle: false,
   borderSize: 1,
@@ -73,9 +94,6 @@ export const stateSlice = createSlice({
     setGap: (state, value: { payload: number }) => {
       state.gap = value.payload;
     },
-    setShowBorder: (state, value: { payload: boolean }) => {
-      state.showBorder = value.payload;
-    },
     setBorderColor: (state, value: { payload: string }) => {
       state.borderColor = value.payload;
     },
@@ -103,40 +121,45 @@ export const stateSlice = createSlice({
     setTitlesPosition: (state, value: { payload: Position }) => {
       state.titlesPosition = value.payload;
     },
-    addGame: (state, value: { payload: { game: Game; index: number } }) => {
-      if (value.payload.index === -1) {
+    addGame: (
+      state,
+      value: { payload: { game: Game; destinationIndex: number } }
+    ) => {
+      if (value.payload.destinationIndex === -1) {
         const firstIndex = state.games.findIndex((game) => !game.cover) ?? 0;
         state.games[firstIndex] = value.payload.game;
-      } else state.games[value.payload.index] = value.payload.game;
+      } else state.games[value.payload.destinationIndex] = value.payload.game;
     },
     swapGame: (
       state,
       value: {
         payload: {
-          game: { title: string; cover: string; index: number };
-          index: number;
+          game: { title: string; cover: string };
+          sourceIndex: number;
+          destinationIndex: number;
         };
       }
     ) => {
-      const toMove = state.games[value.payload.game.index];
-      state.games[value.payload.game.index] = state.games[value.payload.index];
-      state.games[value.payload.index] = toMove;
+      const toMove = state.games[value.payload.sourceIndex];
+      state.games[value.payload.sourceIndex] =
+        state.games[value.payload.destinationIndex];
+      state.games[value.payload.destinationIndex] = toMove;
     },
     removeGame: (state, value: { payload: number }) => {
       state.games[value.payload] = { title: "", cover: "" };
     },
     setPreset: (state, value: { payload: string }) => {
       if (value.payload === "Topsters") {
-        state.showTitles = true;
         state.rows = 5;
         state.columns = 5;
+        state.showTitles = true;
         state.backgroundType = BackgroundType.color;
         state.backgroundColor1 = "#000000";
         state.backgroundOpacity = 16;
         state.gap = 5;
+        state.borderSize = 0;
         state.borderRadius = 0;
         state.isCircle = false;
-        state.showBorder = false;
         state.showNumbers = true;
         state.showShadows = false;
         state.font = Font.monospace;
@@ -153,7 +176,6 @@ export const stateSlice = createSlice({
         state.backgroundColor2 = "#000000";
         state.backgroundOpacity = 0;
         state.gap = 5;
-        state.showBorder = true;
         state.borderSize = 1;
         state.borderRadius = 8;
         state.isCircle = false;
@@ -167,26 +189,7 @@ export const stateSlice = createSlice({
     },
     importState: (state, value: { payload: any }) => {
       const fromFile = JSON.parse(value.payload.target.result);
-      state.title = fromFile.title;
-      state.showTitles = fromFile.showTitles;
-      state.rows = fromFile.rows;
-      state.columns = fromFile.columns;
-      state.backgroundType = fromFile.backgroundType;
-      state.backgroundColor1 = fromFile.backgroundColor1;
-      state.backgroundColor2 = fromFile.backgroundColor2;
-      state.backgroundOpacity = fromFile.backgroundOpacity;
-      state.gradientDirection = fromFile.gradientDirection;
-      state.gap = fromFile.gap;
-      state.showBorder = fromFile.showBorder;
-      state.borderColor = fromFile.borderColor;
-      state.isCircle = fromFile.isCircle;
-      state.borderSize = fromFile.borderSize;
-      state.borderRadius = fromFile.borderRadius;
-      state.showNumbers = fromFile.showNumbers;
-      state.showShadows = fromFile.showShadows;
-      state.font = fromFile.font;
-      state.textColor = fromFile.textColor;
-      state.titlesPosition = fromFile.titlesPosition;
+      copy(state, fromFile);
       state.games = fromFile.games;
     },
     exportState: (state) => {
@@ -195,7 +198,10 @@ export const stateSlice = createSlice({
         encodeURIComponent(JSON.stringify(state));
       var downloadAnchorNode = document.createElement("a");
       downloadAnchorNode.setAttribute("href", dataStr);
-      downloadAnchorNode.setAttribute("download", "topsters.json");
+      downloadAnchorNode.setAttribute(
+        "download",
+        !!state.title ? state.title : "untitled" + ".json"
+      );
       document.body.appendChild(downloadAnchorNode); // required for firefox
       downloadAnchorNode.click();
       downloadAnchorNode.remove();
@@ -205,26 +211,7 @@ export const stateSlice = createSlice({
       for (let i = 0; i < 100; ++i) {
         gameArray.push({ title: "", cover: "" });
       }
-      state.title = initialState.title;
-      state.showTitles = initialState.showTitles;
-      state.rows = initialState.rows;
-      state.columns = initialState.columns;
-      state.backgroundType = initialState.backgroundType;
-      state.backgroundColor1 = initialState.backgroundColor1;
-      state.backgroundColor2 = initialState.backgroundColor2;
-      state.backgroundOpacity = initialState.backgroundOpacity;
-      state.gradientDirection = initialState.gradientDirection;
-      state.gap = initialState.gap;
-      state.showBorder = initialState.showBorder;
-      state.borderColor = initialState.borderColor;
-      state.isCircle = initialState.isCircle;
-      state.borderSize = initialState.borderSize;
-      state.borderRadius = initialState.borderRadius;
-      state.showNumbers = initialState.showNumbers;
-      state.showShadows = initialState.showShadows;
-      state.font = initialState.font;
-      state.textColor = initialState.textColor;
-      state.titlesPosition = initialState.titlesPosition;
+      copy(state, initialState);
       state.games = gameArray;
     },
   },
@@ -241,7 +228,6 @@ export const {
   setBackgroundOpacity,
   setGradientDirection,
   setGap,
-  setShowBorder,
   setBorderColor,
   setIsCircle,
   setBorderSize,
