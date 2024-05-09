@@ -11,7 +11,7 @@
   "dependencies": {
     "@reduxjs/toolkit": "^2.2.3",
     "axios": "^1.6.8",
-    "dom-to-image": "^2.6.0",
+    "modern-screenshot": "^4.4.39",
     "next": "14.2.3",
     "react": "^18.3.1",
     "react-dom": "^18",

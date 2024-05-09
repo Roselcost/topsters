@@ -379,7 +379,6 @@ input[type="color"].value:hover {
 }
 
 .content {
-  border: 1px solid var(--borderColor);
   height: fit-content;
   margin: auto;
 }
@@ -388,6 +387,7 @@ input[type="color"].value:hover {
   background-image: url("/checkerboard.png");
   background-repeat: repeat;
   margin: auto;
+  border: 1px solid var(--borderColor);
 }
 
 .collection {
