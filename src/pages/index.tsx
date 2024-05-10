@@ -327,7 +327,13 @@ export default function Home() {
                                         ref?.classList.remove("added");
                                       }, 500);
                                     }}
-                                    src={"https:" + game.cover}
+                                    src={
+                                      "https:" +
+                                      game.cover.replace(
+                                        "t_cover_big",
+                                        "t_cover_small_2x"
+                                      )
+                                    }
                                     alt="Cover"
                                     width={80}
                                     height={0}

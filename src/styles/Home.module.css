@@ -368,6 +368,7 @@ input[type="color"].value:hover {
   cursor: grab;
   border-radius: 8px;
   position: relative;
+  border: 1px solid var(--borderColor);
 }
 
 .cover img {
