@@ -50,7 +50,7 @@ const initialState: State = {
   gap: 20,
   borderColor: "#cccccc",
   isCircle: false,
-  borderSize: 1,
+  borderSize: 0,
   borderRadius: 0,
   showNumbers: false,
   showShadows: false,
