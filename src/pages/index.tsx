@@ -830,7 +830,7 @@ export default function Home() {
                               dispatch(setGap(parseInt(value.target.value)));
                             }}
                             min={0}
-                            max={20}
+                            max={50}
                             value={gap}
                             className={styles.value}
                             type="range"

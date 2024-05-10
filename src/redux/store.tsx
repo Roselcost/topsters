@@ -47,7 +47,7 @@ const initialState: State = {
   backgroundColor2: "#000000",
   backgroundOpacity: 16,
   gradientDirection: Direction.right,
-  gap: 10,
+  gap: 20,
   borderColor: "#cccccc",
   isCircle: false,
   borderSize: 1,
@@ -156,7 +156,7 @@ export const stateSlice = createSlice({
         state.backgroundType = BackgroundType.color;
         state.backgroundColor1 = "#000000";
         state.backgroundOpacity = 16;
-        state.gap = 5;
+        state.gap = 20;
         state.borderSize = 0;
         state.borderRadius = 0;
         state.isCircle = false;
@@ -173,13 +173,12 @@ export const stateSlice = createSlice({
         state.backgroundType = BackgroundType.gradient;
         state.gradientDirection = Direction.topRight;
         state.backgroundColor1 = "#000000";
-        state.backgroundColor2 = "#000000";
-        state.backgroundOpacity = 0;
-        state.gap = 5;
-        state.borderSize = 1;
+        state.backgroundColor2 = "#2c313a";
+        state.backgroundOpacity = 16;
+        state.gap = 20;
+        state.borderSize = 0;
         state.borderRadius = 8;
         state.isCircle = false;
-        state.borderColor = "#000000";
         state.showNumbers = true;
         state.showShadows = true;
         state.font = Font.lato;
