@@ -378,40 +378,43 @@ export default function Home() {
                       <div className={styles.input}>
                         <label className={styles["input-label"]}>Data</label>
                         <div className={styles.values}>
-                          <label
-                            htmlFor="file"
-                            className={styles["file-upload"]}
-                          >
-                            Import
-                          </label>
-                          <input
-                            id="file"
-                            className={styles.value}
-                            onChange={(e: any) => {
-                              let reader = new FileReader();
-                              reader.onload = (ev: any) => {
-                                dispatch(importState(ev));
-                                e.target.value = "";
-                              };
-                              reader.readAsText(e.target?.files?.[0]);
-                            }}
-                            type="file"
-                          ></input>
-                          <Button
-                            onClick={() => {
-                              dispatch(exportState());
-                            }}
-                          >
-                            Export
-                          </Button>
-                          <Button
-                            onClick={() => {
-                              confirm("Are you sure you want to start over?") &&
-                                dispatch(restart());
-                            }}
-                          >
-                            Restart
-                          </Button>
+                          <div style={{ display: "flex", gap: "8px" }}>
+                            <label
+                              htmlFor="file"
+                              className={styles["file-upload"]}
+                            >
+                              Import
+                            </label>
+                            <input
+                              id="file"
+                              className={styles.value}
+                              onChange={(e: any) => {
+                                let reader = new FileReader();
+                                reader.onload = (ev: any) => {
+                                  dispatch(importState(ev));
+                                  e.target.value = "";
+                                };
+                                reader.readAsText(e.target?.files?.[0]);
+                              }}
+                              type="file"
+                            ></input>
+                            <Button
+                              onClick={() => {
+                                dispatch(exportState());
+                              }}
+                            >
+                              Export
+                            </Button>
+                            <Button
+                              onClick={() => {
+                                confirm(
+                                  "Are you sure you want to start over?"
+                                ) && dispatch(restart());
+                              }}
+                            >
+                              Restart
+                            </Button>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -624,7 +627,10 @@ export default function Home() {
                           <label className={styles["input-label"]}>
                             Direction
                           </label>
-                          <div className={styles.values}>
+                          <div
+                            style={{ justifyContent: "center" }}
+                            className={styles.values}
+                          >
                             <Selector
                               label="Gradient direction"
                               options={[
@@ -716,26 +722,30 @@ export default function Home() {
                       <div className={styles.input}>
                         <label className={styles["input-label"]}>Color</label>
                         <div className={styles.values}>
-                          <input
-                            onChange={(value) =>
-                              dispatch(setBackgroundColor1(value.target.value))
-                            }
-                            value={backgroundColor1}
-                            className={styles.value}
-                            type="color"
-                          ></input>
-                          {backgroundType !== BackgroundType.color && (
+                          <div>
                             <input
                               onChange={(value) =>
                                 dispatch(
-                                  setBackgroundColor2(value.target.value)
+                                  setBackgroundColor1(value.target.value)
                                 )
                               }
-                              value={backgroundColor2}
+                              value={backgroundColor1}
                               className={styles.value}
                               type="color"
                             ></input>
-                          )}
+                            {backgroundType !== BackgroundType.color && (
+                              <input
+                                onChange={(value) =>
+                                  dispatch(
+                                    setBackgroundColor2(value.target.value)
+                                  )
+                                }
+                                value={backgroundColor2}
+                                className={styles.value}
+                                type="color"
+                              ></input>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </div>

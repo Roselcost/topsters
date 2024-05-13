@@ -16,7 +16,7 @@ interface Props {
 const Selector: React.FC<Props> = ({ label, options, selected, onChange }) => {
   return (
     <div
-      style={{ width: label === "Gradient direction" ? "180px" : "" }}
+      style={{ width: label === "Gradient direction" ? "144px" : "" }}
       className={styles.options}
     >
       {options.map((option, i) => (
