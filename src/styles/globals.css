@@ -127,3 +127,28 @@ html[dark] .added:before {
     opacity: 0;
   }
 }
+
+/* width */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 12px;
+  border-radius: 100%;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  margin: 20px 0 0 0;
+  background-color: transparent;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  border-radius: 12px;
+  background: var(--textColor);
+  border: 1px solid var(--borderColor);
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: var(--tabColor);
+}

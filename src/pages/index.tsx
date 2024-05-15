@@ -1162,7 +1162,6 @@ export default function Home() {
                                       borderRadius: isCircle
                                         ? "100%"
                                         : borderRadius,
-                                      objectFit: isCircle ? "cover" : "contain",
                                       height: `${isCircle ? "100px" : "unset"}`,
                                       border: `${borderSize}px solid ${borderColor}`,
                                       boxShadow: `${
@@ -1174,7 +1173,6 @@ export default function Home() {
                                     src={"https:" + game.cover}
                                     alt="Cover"
                                     width={isCircle ? 100 : 75}
-                                    height={isCircle ? 100 : 0}
                                   ></img>
                                   {showTitles &&
                                     titlesPosition === Position.cover && (

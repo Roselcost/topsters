@@ -385,11 +385,12 @@ input[type="color"].value:hover {
   cursor: grab;
   border-radius: 8px;
   position: relative;
-  border: 1px solid var(--borderColor);
+  object-fit: cover;
 }
 
 .cover img {
   border-radius: 8px;
+  border: 1px solid var(--borderColor);
 }
 
 .workspace-content {
