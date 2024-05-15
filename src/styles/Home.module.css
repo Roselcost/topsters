@@ -363,6 +363,11 @@ input[type="color"].value:hover {
   height: 100%;
   font-size: 24px;
   font-family: "Lato";
+  background-color: var(--backgroundColor);
+}
+
+.no-items span {
+  color: var(--textColor);
 }
 
 .items {
