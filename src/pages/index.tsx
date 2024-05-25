@@ -1,14 +1,19 @@
-import Head from "next/head";
-import styles from "@/styles/Home.module.css";
-import { useEffect, useState } from "react";
-import Button from "../components/Button";
-import Image from "next/image";
-import { useDispatch, useSelector } from "react-redux";
+import Selector from "@/components/Selector";
+import { downloadImage } from "@/components/utils";
 import {
-  addGame,
+  BackgroundType,
+  Category,
+  Direction,
+  Font,
+  Item,
+  Position,
+  State,
+} from "@/redux/state";
+import {
+  addItem,
   exportState,
   importState,
-  removeGame,
+  removeItem,
   restart,
   setBackgroundColor1,
   setBackgroundColor2,
@@ -30,23 +35,19 @@ import {
   setTextColor,
   setTitle,
   setTitlesPosition,
-  swapGame,
+  swapItem,
 } from "@/redux/store";
-import {
-  BackgroundType,
-  Direction,
-  Font,
-  Game,
-  Position,
-  State,
-} from "@/redux/state";
-import Selector from "@/components/Selector";
-import { downloadImage } from "@/components/utils";
+import styles from "@/styles/Home.module.css";
 import axios from "axios";
+import Head from "next/head";
+import Image from "next/image";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import Button from "../components/Button";
 
 export default function Home() {
-  const hasData = (game: Game) => {
-    return !!game?.title && !!game?.cover;
+  const hasData = (item: Item) => {
+    return !!item?.title && !!item?.cover;
   };
 
   const resetDrag = () => {
@@ -62,17 +63,17 @@ export default function Home() {
   };
 
   const onDrop = (destinationIndex: number) => {
-    const dragGame = draggingItem.item;
-    if (hasData(dragGame)) {
+    const dragitem = draggingItem.item;
+    if (hasData(dragitem)) {
       if (draggingItem.origin === "add")
         dispatch(
-          addGame({ game: dragGame, destinationIndex: destinationIndex })
+          addItem({ item: dragitem, destinationIndex: destinationIndex })
         );
       else {
         dispatch(
-          swapGame({
-            game: {
-              ...dragGame,
+          swapItem({
+            item: {
+              ...dragitem,
             },
             sourceIndex: draggingItem.index,
             destinationIndex,
@@ -83,23 +84,29 @@ export default function Home() {
     }
   };
 
-  const searchGames = () => {
+  const generateItem = () => {
+    if (!!itemForm.title && !!itemForm.url) {
+      setSearchedItems([
+        {
+          title: itemForm.title,
+          cover: itemForm.url.replace(/(^\w+:|^)\/\//, ""),
+        },
+      ]);
+    }
+  };
+
+  const importItems = () => {};
+
+  const searchItems = () => {
     if (!!search) {
       setIsSearching(true);
       axios
-        .get(`https://topsters4.vercel.app/api/igdb?name=${search}`)
+        .get(
+          `https://topsters4.vercel.app/api/endpoints?category=${category}&name=${search}`
+        )
         .then((response) => {
-          setSearchedGames(
-            response.data.data.map(
-              (game: { cover: { url: string }; name: string }) => {
-                const cover = game.cover?.url.replace("t_thumb", "t_cover_big");
-                return {
-                  title: game.name,
-                  cover,
-                };
-              }
-            )
-          );
+          console.log(response.data[0].cover);
+          setSearchedItems(response.data);
         })
         .catch((error) => {
           console.error(error);
@@ -131,7 +138,7 @@ export default function Home() {
   }, []);
 
   const [draggingItem, setDraggingItem] = useState<{
-    item: Game;
+    item: Item;
     index: number;
     origin: "add" | "collection" | "";
   }>({
@@ -144,6 +151,9 @@ export default function Home() {
   const [darkTheme, setDarkTheme] = useState(true);
   const [isDownloading, setIsDownloading] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
+  const [itemForm, setItemForm] = useState({ title: "", url: "" });
+  const [importForm, setImportForm] = useState([]);
+  const [category, setCategory] = useState(Category.games);
   const [search, setSearch] = useState("");
   const [tab, setTab] = useState("add");
   const dispatch = useDispatch();
@@ -174,8 +184,8 @@ export default function Home() {
   const font = useSelector((state: State) => state.font);
   const textColor = useSelector((state: State) => state.textColor);
   const titlesPosition = useSelector((state: State) => state.titlesPosition);
-  const games = useSelector((state: State) => state.games);
-  const [searchedGames, setSearchedGames] = useState<
+  const items = useSelector((state: State) => state.items);
+  const [searchedItems, setSearchedItems] = useState<
     { title: string; cover: string }[]
   >([]);
   return (
@@ -212,7 +222,7 @@ export default function Home() {
                       src="/icons/add.svg"
                       alt={"Add"}
                     ></Image>
-                    Add games
+                    Add items
                   </h2>
                 </div>
                 <div
@@ -254,61 +264,246 @@ export default function Home() {
                 {tab === "add" && (
                   <div className={`animate-opacity ${styles.search}`}>
                     <div className={styles["input-group"]}>
-                      <div
-                        className={`${styles.input} ${styles["search-input"]}`}
-                      >
-                        <input
-                          onChange={(e) => setSearch(e.target.value)}
-                          className={styles.value}
-                          type="text"
-                          onKeyUp={(e) => {
-                            if (e.key === "Enter") {
-                              searchGames();
-                            }
-                          }}
-                        ></input>
-                        <Button onClick={() => searchGames()}>
-                          <Image
-                            width={10}
-                            height={10}
-                            className={`${styles.icon} ${
-                              isSearching && styles.loading
-                            }`}
-                            src="/icons/search.svg"
-                            alt="Search"
-                          ></Image>
-                        </Button>
+                      <div className={`${styles.input} ${styles.categories}`}>
+                        <Selector
+                          label="categories"
+                          options={[
+                            {
+                              id: Category.games,
+                              name: Category.games,
+                              icon: "/icons/controller.svg",
+                              hideLabel: true,
+                            },
+                            {
+                              id: Category.music,
+                              name: Category.music,
+                              icon: "/icons/music.svg",
+                              hideLabel: true,
+                            },
+                            {
+                              id: Category.movies,
+                              name: Category.movies,
+                              icon: "/icons/movie.svg",
+                              hideLabel: true,
+                            },
+                            {
+                              id: Category.tvshows,
+                              name: Category.tvshows,
+                              icon: "/icons/tv.svg",
+                              hideLabel: true,
+                            },
+                            {
+                              id: Category.books,
+                              name: Category.books,
+                              icon: "/icons/book.svg",
+                              hideLabel: true,
+                            },
+                            // {
+                            //   id: Category.lastfm,
+                            //   name: Category.lastfm,
+                            //   icon: "/icons/lastfm.svg",
+                            //   hideLabel: true,
+                            // },
+                            // {
+                            //   id: Category.pictures,
+                            //   name: Category.pictures,
+                            //   icon: "/icons/picture.svg",
+                            //   hideLabel: true,
+                            // },
+                          ]}
+                          selected={[category]}
+                          onChange={(value) => setCategory(value)}
+                        ></Selector>
                       </div>
                     </div>
+                    <div className={styles["input-group"]}>
+                      {category !== Category.pictures &&
+                        category !== Category.lastfm && (
+                          <div
+                            className={`${styles.input} ${styles["search-input"]}`}
+                          >
+                            <input
+                              onChange={(e) => setSearch(e.target.value)}
+                              className={styles.value}
+                              type="text"
+                              placeholder={`Search ${category}...`}
+                              onKeyUp={(e) => {
+                                if (e.key === "Enter") {
+                                  searchItems();
+                                }
+                              }}
+                            ></input>
+                            <Button onClick={() => searchItems()}>
+                              <Image
+                                width={10}
+                                height={10}
+                                className={`${styles.icon} ${
+                                  isSearching && styles.loading
+                                }`}
+                                src="/icons/search.svg"
+                                alt="Search"
+                              ></Image>
+                            </Button>
+                          </div>
+                        )}
+                      {category === Category.pictures && (
+                        <>
+                          <div
+                            className={`${styles.input} ${styles["search-button"]}`}
+                          >
+                            <h3>Generate new item</h3>
+                          </div>
+                          <div className={styles.input}>
+                            <label className={styles["input-label"]}>
+                              Link
+                            </label>
+                            <div className={styles.values}>
+                              <input
+                                onChange={(e) =>
+                                  setItemForm({
+                                    ...itemForm,
+                                    url: e.target.value,
+                                  })
+                                }
+                                className={styles.value}
+                                type="text"
+                                placeholder={"Image link"}
+                                onKeyUp={(e) => {
+                                  if (e.key === "Enter") {
+                                    generateItem();
+                                  }
+                                }}
+                              ></input>
+                            </div>
+                          </div>
+                          <div className={styles.input}>
+                            <label className={styles["input-label"]}>
+                              Title
+                            </label>
+                            <div className={styles.values}>
+                              <input
+                                onChange={(e) =>
+                                  setItemForm({
+                                    ...itemForm,
+                                    title: e.target.value,
+                                  })
+                                }
+                                className={styles.value}
+                                type="text"
+                                placeholder={`Title`}
+                                onKeyUp={(e) => {
+                                  if (e.key === "Enter") {
+                                    generateItem();
+                                  }
+                                }}
+                              ></input>
+                            </div>
+                          </div>
+                          <div
+                            className={`${styles.input} ${styles["search-button"]}`}
+                          >
+                            <Button onClick={() => generateItem()}>
+                              Generate
+                            </Button>
+                          </div>
+                        </>
+                      )}
+                      {category === Category.lastfm && (
+                        <>
+                          <div
+                            className={`${styles.input} ${styles["search-button"]}`}
+                          >
+                            <h3>Import from Last.fm</h3>
+                          </div>
+                          <div className={`${styles.input} `}>
+                            <label className={styles["input-label"]}>
+                              Username
+                            </label>
+                            <div className={styles.values}>
+                              <input
+                                className={styles.value}
+                                type="text"
+                                placeholder={`Username`}
+                                onKeyUp={(e) => {
+                                  if (e.key === "Enter") {
+                                    importItems();
+                                  }
+                                }}
+                              ></input>
+                            </div>
+                          </div>
+                          <div
+                            style={{ height: "88px" }}
+                            className={styles.input}
+                          >
+                            <label className={styles["input-label"]}>
+                              Period
+                            </label>
+                            <div className={styles.values}>
+                              <Selector
+                                options={[
+                                  { id: "overall", name: "Overall" },
+                                  { id: "week", name: "Week" },
+                                  { id: "month", name: "Month" },
+                                  { id: "three", name: "3 months" },
+                                  { id: "six", name: "6 months" },
+                                  { id: "year", name: "Year" },
+                                ]}
+                                selected={["week"]}
+                                onChange={function (id: any): void | {} {
+                                  throw new Error("Function not implemented.");
+                                }}
+                              ></Selector>
+                            </div>
+                          </div>
+                          <div
+                            className={`${styles.input} ${styles["search-button"]}`}
+                          >
+                            <Button onClick={() => importItems()}>
+                              Import
+                            </Button>
+                          </div>
+                        </>
+                      )}
+                    </div>
 
-                    <div className={`${styles["input-group"]} ${styles.items}`}>
-                      {!searchedGames.length && (
+                    <div
+                      style={
+                        category === Category.lastfm
+                          ? { display: "none" }
+                          : category === Category.pictures
+                          ? { height: "unset" }
+                          : {}
+                      }
+                      className={`${styles["input-group"]} ${styles.items}`}
+                    >
+                      {!searchedItems.length && (
                         <div className={styles["no-items"]}>
                           <Image
                             width={100}
                             height={100}
                             className={`${styles.icon} ${styles["big-icon"]}`}
-                            src={"/icons/controller.svg"}
+                            src={"/icons/picture.svg"}
                             alt={"No items"}
                           ></Image>
                           <span>Nothing here... yet!</span>
                         </div>
                       )}
-                      {!!searchedGames.length && (
+                      {!!searchedItems.length && (
                         <div className={styles.covers}>
-                          {searchedGames
-                            .filter((game) => hasData(game))
-                            .map((game, i) => {
+                          {searchedItems
+                            .filter((item) => hasData(item))
+                            .map((item, i) => {
                               return (
                                 <div
-                                  key={i + game.title}
+                                  key={i + item.title}
                                   className={styles.cover}
                                 >
                                   <Image
                                     draggable={true}
                                     onDragStart={() => {
                                       setDraggingItem({
-                                        item: { ...game },
+                                        item: { ...item },
                                         index: -1,
                                         origin: "add",
                                       });
@@ -316,8 +511,8 @@ export default function Home() {
                                     onDragEnd={() => resetDrag()}
                                     onClick={(e) => {
                                       dispatch(
-                                        addGame({
-                                          game: game,
+                                        addItem({
+                                          item,
                                           destinationIndex: -1,
                                         })
                                       );
@@ -329,7 +524,7 @@ export default function Home() {
                                     }}
                                     src={
                                       "https:" +
-                                      game.cover.replace(
+                                      item.cover.replace(
                                         "t_cover_big",
                                         "t_cover_small_2x"
                                       )
@@ -479,6 +674,7 @@ export default function Home() {
                             onChange={(e) => dispatch(setTitle(e.target.value))}
                             className={styles.value}
                             value={title}
+                            placeholder="Set a title..."
                             type="text"
                           ></input>
                         </div>
@@ -556,6 +752,7 @@ export default function Home() {
                             onChange={(e) => dispatch(setFont(e.target.value))}
                             className={styles.value}
                             value={font}
+                            placeholder="Set a font..."
                             type="text"
                           ></input>
                         </div>
@@ -891,43 +1088,96 @@ export default function Home() {
                           :)
                         </p>
                         <p>
-                          It only has support for games, unlike Topsters 3,
-                          where you can also add music, TV shows, movies, books
-                          and pretty much anything you like. I know the concept
-                          was originally in fact for music but gaming is my
-                          thing. Maybe I&apos;ll add support someday... sorry!
-                        </p>
-                        <p>
                           Topsters 1 and 2 are not around anymore, but Topsters
                           3 is still up and running and has been for a couple or
                           years already. Give it a try if you want!
                         </p>
                         <p>
                           Also, if you feel like you can improve upon this
-                          version and pass on the legacy, you can fork the
-                          GitHub repo or go ahead and make your own Topsters 5
-                          from scratch!
+                          version and pass on the legacy, you can fork the{" "}
+                          <a
+                            target="_blank"
+                            href="https://github.com/roselcost/topsters"
+                          >
+                            GitHub repo
+                          </a>{" "}
+                          or go ahead and make your own Topsters 5 from scratch!
                         </p>
+                        <h2>Data sources</h2>
+                        <br></br>
                         <div
                           style={{
                             display: "flex",
-                            justifyContent: "space-around",
+                            flexWrap: "wrap",
+                            justifyContent: "center",
+                            gap: "8px",
+                            width: "100%",
                           }}
                         >
-                          <Button
-                            onClick={() => window.open("https://igdb.com")}
+                          <a
+                            className={styles["link-button"]}
+                            target="_blank"
+                            href="https://igdb.com"
                           >
-                            Data from IGDB
-                          </Button>
-                          <Button
-                            onClick={() =>
-                              window.open(
-                                "https://github.com/roselcost/topsters"
-                              )
-                            }
+                            <div className={styles["link-icon"]}>
+                              <Image
+                                width={10}
+                                height={10}
+                                className={styles.icon}
+                                src={"/icons/controller.svg"}
+                                alt={"controller"}
+                              ></Image>
+                            </div>
+                            <span>IGDB</span>
+                          </a>
+                          <a
+                            className={styles["link-button"]}
+                            target="_blank"
+                            href="https://last.fm"
                           >
-                            GitHub Repository
-                          </Button>
+                            <div className={styles["link-icon"]}>
+                              <Image
+                                width={10}
+                                height={10}
+                                className={styles.icon}
+                                src={"/icons/music.svg"}
+                                alt={"music"}
+                              ></Image>
+                            </div>
+                            <span>Last.fm</span>
+                          </a>
+                          <a
+                            className={styles["link-button"]}
+                            target="_blank"
+                            href="https://www.themoviedb.org"
+                          >
+                            <div className={styles["link-icon"]}>
+                              <Image
+                                width={10}
+                                height={10}
+                                className={styles.icon}
+                                src={"/icons/tv.svg"}
+                                alt={"tv"}
+                              ></Image>
+                            </div>
+                            <span>The Movie Database</span>
+                          </a>
+                          <a
+                            className={styles["link-button"]}
+                            target="_blank"
+                            href="https://openlibrary.org"
+                          >
+                            <div className={styles["link-icon"]}>
+                              <Image
+                                width={10}
+                                height={10}
+                                className={styles.icon}
+                                src={"/icons/book.svg"}
+                                alt={"book"}
+                              ></Image>
+                            </div>
+                            <span>Open Library</span>
+                          </a>
                         </div>
                       </div>
                     </div>
@@ -1043,9 +1293,9 @@ export default function Home() {
                         }}
                         className={styles["workspace-covers"]}
                       >
-                        {games
-                          .filter((_game, i) => i < rows * columns)
-                          .map((game, i) => (
+                        {items
+                          .filter((_item, i) => i < rows * columns)
+                          .map((item, i) => (
                             <div
                               key={i}
                               className={`${styles["workspace-cover"]} ${
@@ -1066,10 +1316,10 @@ export default function Home() {
                                 e.preventDefault();
                                 setHoverItem(i);
                               }}
-                              draggable={hasData(game)}
+                              draggable={hasData(item)}
                               onDragStart={() => {
                                 setDraggingItem({
-                                  item: { ...game },
+                                  item: { ...item },
                                   index: i,
                                   origin: "collection",
                                 });
@@ -1077,9 +1327,9 @@ export default function Home() {
                               onClick={(e: any) => {
                                 if (e?.target?.id !== "remove") {
                                   if (draggingItem.index === -1) {
-                                    if (hasData(game)) {
+                                    if (hasData(item)) {
                                       setDraggingItem({
-                                        item: { ...game },
+                                        item: { ...item },
                                         index: i,
                                         origin: "collection",
                                       });
@@ -1091,7 +1341,7 @@ export default function Home() {
                               }}
                               onDragEnd={() => resetDrag()}
                             >
-                              {!hasData(game) && (
+                              {!hasData(item) && (
                                 <div
                                   style={{
                                     backgroundColor: `#ccc`,
@@ -1113,12 +1363,12 @@ export default function Home() {
                                   </span>
                                 </div>
                               )}
-                              {hasData(game) && draggingItem.index === -1 && (
+                              {hasData(item) && draggingItem.index === -1 && (
                                 <>
                                   <div
                                     id="remove"
                                     onClick={() => {
-                                      dispatch(removeGame(i));
+                                      dispatch(removeItem(i));
                                       resetDrag();
                                     }}
                                     className={styles.delete}
@@ -1133,9 +1383,9 @@ export default function Home() {
                                     onClick={(e: any) => {
                                       if (e?.target?.id !== "remove") {
                                         if (draggingItem.index === -1) {
-                                          if (hasData(game)) {
+                                          if (hasData(item)) {
                                             setDraggingItem({
-                                              item: { ...game },
+                                              item: { ...item },
                                               index: i,
                                               origin: "collection",
                                             });
@@ -1154,7 +1404,7 @@ export default function Home() {
                                   </div>
                                 </>
                               )}
-                              {hasData(game) && (
+                              {hasData(item) && (
                                 <>
                                   <img
                                     className={styles.cover}
@@ -1163,6 +1413,8 @@ export default function Home() {
                                         ? "100%"
                                         : borderRadius,
                                       height: `${isCircle ? "100px" : "unset"}`,
+                                      maxHeight: "100px",
+                                      maxWidth: "100px",
                                       border: `${borderSize}px solid ${borderColor}`,
                                       boxShadow: `${
                                         showShadows
@@ -1170,9 +1422,9 @@ export default function Home() {
                                           : "unset"
                                       }`,
                                     }}
-                                    src={"https:" + game.cover}
+                                    src={"https:" + item.cover}
                                     alt="Cover"
-                                    width={isCircle ? 100 : 75}
+                                    width={isCircle ? 100 : "unset"}
                                   ></img>
                                   {showTitles &&
                                     titlesPosition === Position.cover && (
@@ -1191,7 +1443,7 @@ export default function Home() {
                                         <div>
                                           {`${
                                             showNumbers ? `${i + 1}. ` : ""
-                                          }` + game.title}
+                                          }` + item.title}
                                         </div>
                                       </div>
                                     )}
@@ -1213,13 +1465,13 @@ export default function Home() {
                           }}
                         >
                           {titlesPosition === Position.side &&
-                            !games.some((game) => hasData(game)) && (
+                            !items.some((item) => hasData(item)) && (
                               <div className={styles["no-items"]}>
                                 <Image
                                   width={100}
                                   height={100}
                                   className={`${styles.icon} ${styles["big-icon"]}`}
-                                  src={"/icons/controller.svg"}
+                                  src={"/icons/picture.svg"}
                                   alt={"No items"}
                                 ></Image>
 
@@ -1227,15 +1479,15 @@ export default function Home() {
                               </div>
                             )}
                           {titlesPosition === Position.side &&
-                            games
-                              .filter((_game, i) => i < rows * columns)
-                              .map((game, i) => {
+                            items
+                              .filter((_item, i) => i < rows * columns)
+                              .map((item, i) => {
                                 const number = showNumbers ? `${i + 1}. ` : "";
                                 const br =
                                   (i + 1) % columns === 0 ? <br></br> : "";
-                                const res = hasData(game) ? (
+                                const res = hasData(item) ? (
                                   <div key={i}>
-                                    <div>{number + game.title}</div>
+                                    <div>{number + item.title}</div>
                                     {br}
                                   </div>
                                 ) : (

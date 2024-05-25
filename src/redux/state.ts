@@ -18,7 +18,7 @@ export type State = {
   font: Font | string;
   textColor: string;
   titlesPosition: Position;
-  games: Game[];
+  items: Item[];
 };
 
 export enum BackgroundType {
@@ -49,7 +49,17 @@ export enum Position {
   cover = "Cover",
 }
 
-export interface Game {
+export enum Category {
+  games = "games",
+  music = "music",
+  lastfm = "Lastfm",
+  movies = "movies",
+  tvshows = "TV shows",
+  books = "books",
+  pictures = "pictures",
+}
+
+export interface Item {
   title: string;
   cover: string;
 }

@@ -3,16 +3,16 @@ import {
   BackgroundType,
   Direction,
   Font,
-  Game,
+  Item,
   Position,
   State,
 } from "./state";
 import { persistReducer, persistStore } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 
-const gameArray = [];
+const itemArray = [];
 for (let i = 0; i < 100; ++i) {
-  gameArray.push({ title: "", cover: "" });
+  itemArray.push({ title: "", cover: "" });
 }
 
 const copy = (targetState: State, sourceState: State) => {
@@ -57,7 +57,7 @@ const initialState: State = {
   font: Font.monospace,
   textColor: "#ffffff",
   titlesPosition: Position.side,
-  games: gameArray,
+  items: itemArray,
 };
 
 export const stateSlice = createSlice({
@@ -121,32 +121,32 @@ export const stateSlice = createSlice({
     setTitlesPosition: (state, value: { payload: Position }) => {
       state.titlesPosition = value.payload;
     },
-    addGame: (
+    addItem: (
       state,
-      value: { payload: { game: Game; destinationIndex: number } }
+      value: { payload: { item: Item; destinationIndex: number } }
     ) => {
       if (value.payload.destinationIndex === -1) {
-        const firstIndex = state.games.findIndex((game) => !game.cover) ?? 0;
-        state.games[firstIndex] = value.payload.game;
-      } else state.games[value.payload.destinationIndex] = value.payload.game;
+        const firstIndex = state.items.findIndex((item) => !item.cover) ?? 0;
+        state.items[firstIndex] = value.payload.item;
+      } else state.items[value.payload.destinationIndex] = value.payload.item;
     },
-    swapGame: (
+    swapItem: (
       state,
       value: {
         payload: {
-          game: { title: string; cover: string };
+          item: Item;
           sourceIndex: number;
           destinationIndex: number;
         };
       }
     ) => {
-      const toMove = state.games[value.payload.sourceIndex];
-      state.games[value.payload.sourceIndex] =
-        state.games[value.payload.destinationIndex];
-      state.games[value.payload.destinationIndex] = toMove;
+      const toMove = state.items[value.payload.sourceIndex];
+      state.items[value.payload.sourceIndex] =
+        state.items[value.payload.destinationIndex];
+      state.items[value.payload.destinationIndex] = toMove;
     },
-    removeGame: (state, value: { payload: number }) => {
-      state.games[value.payload] = { title: "", cover: "" };
+    removeItem: (state, value: { payload: number }) => {
+      state.items[value.payload] = { title: "", cover: "" };
     },
     setPreset: (state, value: { payload: string }) => {
       if (value.payload === "Topsters") {
@@ -189,7 +189,7 @@ export const stateSlice = createSlice({
     importState: (state, value: { payload: any }) => {
       const fromFile = JSON.parse(value.payload.target.result);
       copy(state, fromFile);
-      state.games = fromFile.games;
+      state.items = fromFile.items;
     },
     exportState: (state) => {
       var dataStr =
@@ -206,12 +206,12 @@ export const stateSlice = createSlice({
       downloadAnchorNode.remove();
     },
     restart: (state) => {
-      const gameArray = [];
+      const itemArray = [];
       for (let i = 0; i < 100; ++i) {
-        gameArray.push({ title: "", cover: "" });
+        itemArray.push({ title: "", cover: "" });
       }
       copy(state, initialState);
-      state.games = gameArray;
+      state.items = itemArray;
     },
   },
 });
@@ -236,9 +236,9 @@ export const {
   setFont,
   setTextColor,
   setTitlesPosition,
-  addGame,
-  swapGame,
-  removeGame,
+  addItem,
+  swapItem,
+  removeItem,
   setPreset,
   exportState,
   importState,
