@@ -84,7 +84,7 @@ async function musicRequest(name: string, res: any) {
         (album: { artist: string; name: string; image: any }) => {
           const cover = album.image
             .find((image: { size: string }) => image.size === "large")
-            ["#text"].replace("https://", "");
+            ["#text"].replace("https:", "");
           return {
             title: `${album.artist} - ${album.name}`,
             cover,
@@ -109,7 +109,7 @@ async function lastfmRequest(name: string, res: any) {
         (album: { artist: string; name: string; image: any }) => {
           const cover = album.image
             .find((image: { size: string }) => image.size === "large")
-            ["#text"].replace("https://", "");
+            ["#text"].replace("https:", "");
           return {
             title: `${album.artist} - ${album.name}`,
             cover,
@@ -140,7 +140,7 @@ async function moviesRequest(name: string, res: any) {
             !!movie.poster_path && !!movie.title
         )
         .map((movie: { poster_path: string; title: string }) => {
-          const cover = "image.tmdb.org/t/p/w185" + movie.poster_path;
+          const cover = "//image.tmdb.org/t/p/w185" + movie.poster_path;
           return {
             title: movie.title,
             cover,
@@ -169,7 +169,7 @@ async function showsRequest(name: string, res: any) {
             !!show.poster_path && !!show.name
         )
         .map((show: { poster_path: string; name: string }) => {
-          const cover = "image.tmdb.org/t/p/w185" + show.poster_path;
+          const cover = "//image.tmdb.org/t/p/w185" + show.poster_path;
           return {
             title: show.name,
             cover,
@@ -194,7 +194,7 @@ async function booksRequest(name: string, res: any) {
             !!book.cover_edition_key && !!book.title
         )
         .map((book: { cover_edition_key: string; title: string }) => {
-          const cover = `covers.openlibrary.org/b/olid/${book.cover_edition_key}-L.jpg`;
+          const cover = `//covers.openlibrary.org/b/olid/${book.cover_edition_key}-L.jpg`;
           return {
             title: book.title,
             cover,
