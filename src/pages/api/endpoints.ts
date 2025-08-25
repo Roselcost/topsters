@@ -1,6 +1,16 @@
 import { Category } from "@/redux/state";
 import axios from "axios";
 
+type Game = {
+  id: number;
+  cover: {
+    id: number;
+    url: string;
+  };
+  name: string;
+  rating: number;
+};
+
 async function getIGDBToken() {
   await axios
     .post(
@@ -46,7 +56,7 @@ export default async function handler(
 }
 
 async function gamesRequest(name: string, res: any) {
-  const query = "fields name,cover.url;" + 'search "' + name + '"; limit 50;';
+  const query = "fields name,cover.url,rating;" + 'search "' + name + '"; limit 50;';
   await axios({
     url: "https://api.igdb.com/v4/games/",
     method: "POST",
@@ -57,9 +67,14 @@ async function gamesRequest(name: string, res: any) {
     },
     data: query,
   })
-    .then(async (resp) => {
-      const ret = resp.data.map(
-        (game: { cover: { url: string }; name: string }) => {
+    .then(async (resp: { data: Game[] }) => {
+      const ret = resp.data
+        .sort((a, b) => {
+          const aRating = !!a.rating ? a.rating : -Infinity;
+          const bRating = !!b.rating ? b.rating : -Infinity;
+          return bRating - aRating;
+        })
+        .map((game: Game) => {
           const cover = game.cover?.url.replace("t_thumb", "t_cover_big");
           return {
             title: game.name,

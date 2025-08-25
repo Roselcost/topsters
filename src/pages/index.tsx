@@ -1479,22 +1479,61 @@ export default function Home() {
                               </div>
                             )}
                           {titlesPosition === Position.side &&
-                            items
-                              .filter((_item, i) => i < rows * columns)
-                              .map((item, i) => {
-                                const number = showNumbers ? `${i + 1}. ` : "";
-                                const br =
-                                  (i + 1) % columns === 0 ? <br></br> : "";
-                                const res = hasData(item) ? (
-                                  <div key={i}>
-                                    <div>{number + item.title}</div>
-                                    {br}
+                            (() => {
+                              // limit items
+                              const visibleItems = items.filter(
+                                (_item, i) => i < rows * columns
+                              );
+
+                              // helper to chunk into rows
+                              const chunk = (arr: any[], size: number) =>
+                                arr.reduce((acc, _, i) => {
+                                  if (i % size === 0)
+                                    acc.push(arr.slice(i, i + size));
+                                  return acc;
+                                }, []);
+
+                              const rowsArr = chunk(visibleItems, columns);
+
+                              // render rows with columns
+                              return rowsArr.map(
+                                (rowItems: Item[], rowIdx: number) => (
+                                  <div
+                                    style={
+                                      items.some((item) => hasData(item))
+                                        ? {
+                                            height:
+                                              (rowIdx === rowsArr.length - 1
+                                                ? 0
+                                                : gap) +
+                                              100 +
+                                              "px",
+                                          }
+                                        : {}
+                                    }
+                                    key={rowIdx}
+                                    className="row"
+                                  >
+                                    {rowItems.map(
+                                      (item: Item, colIdx: number) => {
+                                        const i = rowIdx * columns + colIdx;
+                                        const number = showNumbers
+                                          ? `${i + 1}. `
+                                          : "";
+
+                                        return (
+                                          <div key={i} className="column">
+                                            {hasData(item)
+                                              ? number + item.title
+                                              : ""}
+                                          </div>
+                                        );
+                                      }
+                                    )}
                                   </div>
-                                ) : (
-                                  <div key={i}>{br}</div>
-                                );
-                                return res;
-                              })}
+                                )
+                              );
+                            })()}
                         </div>
                       )}
                     </div>

@@ -230,6 +230,10 @@ input.value:hover {
   justify-content: center;
 }
 
+input[type="text"].value {
+  box-shadow: 0px 0px 1px 2px rgb(0 0 0 / 8%) inset;
+}
+
 input[type="range"].value {
   width: calc(100% - 28px);
   padding: 0;
@@ -462,8 +466,9 @@ input[type="color"].value:hover {
 }
 
 .side-titles {
-  width: 300px;
-  font-size: 10px;
+  /* width: 300px; */
+  /* font-size: 10px; */
+  font-size: 8.5px;
 }
 
 .icon {
