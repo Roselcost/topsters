@@ -130,7 +130,7 @@ html[dark] .icon {
 }
 
 .side-titles {
-  /* width: 300px; */
+  width: max-content;
   /* font-size: 10px; */
   font-size: 8.5px;
 }
