@@ -111,10 +111,6 @@
   height: calc(100% - 30px);
 }
 
-.about {
-  padding: 16px;
-}
-
 @media (max-width: 1300px) {
   .left-panel {
     width: unset;
@@ -141,7 +137,6 @@
   padding: 0 !important;
 }
 
-
 .tab select {
   width: 140px;
   background: transparent;
@@ -161,9 +156,6 @@
   color: var(--backgroundColor);
 }
 
-
-
-
 .add-items {
   height: calc(100% - 40px);
 }
@@ -181,34 +173,12 @@
   filter: invert(1) brightness(0.3);
 }
 
-.link-button {
-  display: flex;
-  align-items: center;
-  border: 1px solid var(--borderColor);
-  border-radius: 4px;
-  box-shadow: 2px 2px 2px var(--shadowColor);
-  gap: 4px;
-  overflow: hidden;
-  width: 200px;
-  height: 32px;
-  transition: 0.2s;
-}
 
-.link-button:hover {
-  border: 1px solid var(--textColor);
-}
 
-.link-icon {
-  background-color: var(--accentColor3);
-  filter: invert(0);
-  padding: 8px;
-  margin-right: 4px;
-  width: 32px;
-}
 
-.link-button span {
-  color: var(--textColor);
-}
+
+
+
 
 .tab:hover .icon,
 .selected-tab .icon,

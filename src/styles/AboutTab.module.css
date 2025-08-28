@@ -1,0 +1,59 @@
+.input-group {
+  display: flex;
+  flex-direction: column;
+  border-radius: 8px;
+  overflow: auto;
+  background-color: var(--backgroundColor);
+  border: 1px solid var(--borderColor);
+  margin: 12px 0;
+}
+
+.about {
+  padding: 16px;
+}
+
+.icon {
+  width: 16px;
+  filter: invert(1) brightness(0.3);
+}
+
+html[dark] .icon {
+  filter: invert(1) brightness(0.7);
+}
+
+.link-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.link-button {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--borderColor);
+  border-radius: 4px;
+  box-shadow: 2px 2px 2px var(--shadowColor);
+  gap: 4px;
+  overflow: hidden;
+  width: 200px;
+  height: 32px;
+  transition: 0.2s;
+}
+
+.link-button:hover {
+  border: 1px solid var(--textColor);
+}
+
+.link-icon {
+  background-color: var(--accentColor3);
+  filter: invert(0);
+  padding: 8px;
+  margin-right: 4px;
+  width: 32px;
+}
+
+.link-button span {
+  color: var(--textColor);
+}
