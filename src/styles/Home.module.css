@@ -340,88 +340,13 @@ input[type="color"].value:hover {
   height: calc(100% - 40px);
 }
 
-.search {
-  height: calc(100% - 12px);
-  width: 350px;
-  max-width: 100%;
-}
-
-.search-input {
-  justify-content: space-between;
-  padding: 8px 16px;
-}
-
-.search-button {
-  justify-content: center;
-  background-color: var(--accentColor3);
-  padding: 8px 16px;
-}
-
-.categories {
-  justify-content: center;
-}
-
-.no-items {
-  cursor: unset !important;
-  display: flex;
-  padding: 16px;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-  font-size: 24px;
-  font-family: "Lato";
-  background-color: var(--backgroundColor);
-}
-
-.no-items span {
-  color: var(--textColor);
-}
-
-.items {
-  height: calc(100% - 110px);
-}
-
-.covers {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  grid-column-gap: 5px;
-  grid-row-gap: 20px;
-  justify-items: center;
-  align-content: flex-start;
-  padding: 8px;
-  height: 100%;
-  overflow: auto;
-}
-
-.cover {
-  cursor: grab;
-  border-radius: 8px;
-  position: relative;
-  object-fit: cover;
-}
-
-.cover img {
-  border-radius: 8px;
-  border: 1px solid var(--borderColor);
-}
-
 .workspace-content {
   display: flex;
 }
 
-
 .collection {
   display: flex;
 }
-
-.loading {
-  -webkit-animation: spin 0.5s linear infinite;
-  -moz-animation: spin 0.5s linear infinite;
-  animation: spin 0.5s linear infinite;
-}
-
 
 .icon {
   width: 16px;
@@ -457,15 +382,6 @@ input[type="color"].value:hover {
   color: var(--textColor);
 }
 
-.big-icon {
-  width: 80px;
-  margin-bottom: 16px;
-  border: 2px solid var(--backgroundColor);
-  border-radius: 12px;
-  padding: 8px;
-  box-sizing: content-box;
-}
-
 .tab:hover .icon,
 .selected-tab .icon,
 html[dark] .icon {
@@ -475,21 +391,4 @@ html[dark] .icon {
 html[dark] .tab:hover .icon,
 html[dark] .selected-tab .icon {
   filter: unset;
-}
-
-@-moz-keyframes spin {
-  100% {
-    -moz-transform: rotate(360deg);
-  }
-}
-@-webkit-keyframes spin {
-  100% {
-    -webkit-transform: rotate(360deg);
-  }
-}
-@keyframes spin {
-  100% {
-    -webkit-transform: rotate(360deg);
-    transform: rotate(360deg);
-  }
 }
