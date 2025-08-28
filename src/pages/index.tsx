@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Workspace from "@/components/Workspace";
 import AddTab from "@/components/AddTab";
 import AboutTab from "@/components/AboutTab";
+import Background from "@/components/Background";
 
 export default function Home() {
   const hasData = (item: Item) => {
@@ -96,6 +97,7 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.png" />
       </Head>
+      <Background></Background>
       <main className={`${styles.main}`}>
         <div className={styles.container}>
           <div className={styles["left-panel"]}>

@@ -90,6 +90,7 @@ input[type="range"].value::-webkit-slider-runnable-track {
   box-shadow: 2px 2px 2px var(--shadowColor);
   border-radius: 8px;
   height: 12px;
+  transition-duration: 0.2s;
 }
 
 input[type="range"].value::-moz-range-track {
@@ -97,6 +98,7 @@ input[type="range"].value::-moz-range-track {
   border: 1px solid var(--borderColor);
   border-radius: 4px;
   height: 8px;
+  transition-duration: 0.2s;
 }
 
 input[type="range"].value::-webkit-slider-thumb {
@@ -125,6 +127,7 @@ input[type="range"].value::-moz-range-thumb {
   height: 12px;
   width: 12px;
   border-radius: 100%;
+  transition-duration: 0.2s;
 }
 
 input[type="color"].value {

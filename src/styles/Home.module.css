@@ -58,6 +58,7 @@
   overflow: auto;
   height: 100%;
   margin: 20px 0;
+  transition-duration: 0.2s;
 }
 
 .tab {
@@ -75,7 +76,7 @@
   border-radius: 8px;
   margin: 0 4px;
   cursor: pointer;
-  transition: 0.2s;
+  transition-duration: 0.2s;
 }
 
 .tab h2 {
@@ -89,6 +90,7 @@
   color: var(--backgroundColor);
   border: 1px solid var(--borderColor);
   background-color: var(--tabColor);
+  transition-duration: 0.2s;
 }
 
 @media (max-width: 1300px) {
@@ -188,5 +190,5 @@ html[dark] .icon {
 
 html[dark] .tab:hover .icon,
 html[dark] .selected-tab .icon {
-  filter: unset;
+  filter: invert(0) brightness(1);
 }

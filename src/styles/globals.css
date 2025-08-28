@@ -20,11 +20,6 @@ body {
   font-family: "Lato";
   color: rgb(48, 48, 48);
   background-color: rgb(196, 207, 209);
-  background-image: radial-gradient(
-    at left,
-    rgb(201, 201, 201),
-    rgb(203, 226, 229)
-  );
 }
 
 html[dark] body {
@@ -40,7 +35,6 @@ html[dark] body {
   --shadowColor: rgba(0, 0, 0, 0.324);
   color: rgb(178, 178, 178);
   background-color: rgb(13, 17, 20);
-  background-image: radial-gradient(at left, rgb(12, 12, 12), rgb(17, 25, 30));
 }
 
 h1,

@@ -1,0 +1,40 @@
+.container {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 0;
+}
+
+.dark {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(at left, rgb(12, 12, 12), rgb(17, 25, 30));
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0;
+}
+
+.light {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(
+    at left,
+    rgb(201, 201, 201),
+    rgb(203, 226, 229)
+  );
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 1;
+}
+
+html[dark] .dark {
+  opacity: 1;
+}
+
+html[dark] .light {
+  opacity: 0;
+}
