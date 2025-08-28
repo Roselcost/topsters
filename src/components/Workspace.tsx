@@ -86,6 +86,7 @@ export default function Workspace({
         justifyContent: "center",
       }}
       ref={containerRef}
+      id="imageContainer"
     >
       <div
         className={styles.checkerboard}
@@ -95,7 +96,6 @@ export default function Workspace({
         }}
       >
         <div
-          id="imageContainer"
           ref={contentRef}
           className={styles.content}
           style={{
