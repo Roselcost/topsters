@@ -112,22 +112,30 @@
   height: calc(100% - 30px);
 }
 
+.toolbar {
+  height: calc(100% - 126px);
+}
+
 @media (max-width: 1300px) {
   .left-panel {
     width: unset;
     max-width: 400px;
+    height: 50%;
   }
   .workspace {
     width: unset;
+    height: 50%;
+  }
+  .app-header {
+    display: none;
+  }
+  .toolbar {
+    height: 100%;
   }
 }
 
 .app-header {
   height: 65px;
-}
-
-.toolbar {
-  height: calc(100% - 126px);
 }
 
 .header {
@@ -173,13 +181,6 @@
   width: 16px;
   filter: invert(1) brightness(0.3);
 }
-
-
-
-
-
-
-
 
 .tab:hover .icon,
 .selected-tab .icon,

@@ -52,7 +52,7 @@ export default function AddTab({
       setIsSearching(true);
       axios
         .get(
-          `http://localhost:3000/api/endpoints?category=${category}&name=${search}`
+          `https://topsters4.vercel.app/api/endpoints?category=${category}&name=${search}`
         )
         .then((response) => {
           console.log(response.data[0].cover);
