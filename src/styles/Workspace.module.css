@@ -3,6 +3,9 @@
   background-repeat: repeat;
   margin: auto;
   border: 1px solid var(--borderColor);
+  position: relative;
+  z-index: 20;
+  width: fit-content;
 }
 
 .content {

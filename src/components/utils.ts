@@ -1,7 +1,12 @@
 import { domToPng } from "modern-screenshot";
 
 export const downloadImage = async (title: string) => {
-  await domToPng(document.getElementById("imageContainer")!, {
+  const orig = document.getElementById("checkerboard")!;
+  const clone = orig.cloneNode(true) as HTMLElement;
+  clone.id = "copy";
+  clone.style.transform = "unset";
+  document.body.appendChild(clone);
+  await domToPng(clone, {
     scale: 2,
     fetch: {
       requestInit: {
@@ -17,5 +22,6 @@ export const downloadImage = async (title: string) => {
       link.href = dataUrl;
       link.click();
     })
-    .catch((err) => console.error(err));
+    .catch((err) => console.error(err))
+    .finally(() => document.getElementById("copy")!.remove());
 };

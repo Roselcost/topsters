@@ -133,6 +133,18 @@ html[dark] .icon {
   box-sizing: content-box;
 }
 
+@media (max-width: 1300px) {
+  .big-icon {
+    width: unset;
+    margin: 0;
+  }
+
+  .no-items {
+    flex-direction: row;
+    gap: 8px;
+  }
+}
+
 .covers {
   display: grid;
   grid-template-columns: repeat(4, 1fr);

@@ -75,7 +75,17 @@ export default function Workspace({
     calculateScale();
     window.addEventListener("resize", calculateScale);
     return () => window.removeEventListener("resize", calculateScale);
-  }, [rows, columns, gap, items]);
+  }, [
+    rows,
+    columns,
+    gap,
+    items,
+    titlesPosition,
+    title,
+    showTitles,
+    showNumbers,
+    font,
+  ]);
 
   return (
     <div
@@ -86,9 +96,9 @@ export default function Workspace({
         justifyContent: "center",
       }}
       ref={containerRef}
-      id="imageContainer"
     >
       <div
+        id="checkerboard"
         className={styles.checkerboard}
         style={{
           transform: `scale(${scale})`,

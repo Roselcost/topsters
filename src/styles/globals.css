@@ -20,6 +20,7 @@ body {
   font-family: "Lato";
   color: rgb(48, 48, 48);
   background-color: rgb(196, 207, 209);
+  overflow: hidden;
 }
 
 html[dark] body {
