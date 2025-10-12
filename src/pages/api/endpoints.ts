@@ -18,6 +18,20 @@ async function getIGDBToken() {
     )
     .then((resp) => {
       console.log("Access token: " + resp.data.access_token);
+
+      const expires_in = resp.data.expires_in;
+      const expires_in_days = Math.floor(expires_in / (24 * 60 * 60));
+
+      console.log("Expires in: ", `${expires_in} (${expires_in_days} days)`);
+
+      const today = new Date();
+      const futureDate = new Date(today);
+      futureDate.setDate(today.getDate() + expires_in_days);
+      const month = futureDate.toLocaleString("en-US", { month: "short" });
+      const day = futureDate.getDate();
+      const year = futureDate.getFullYear();
+      const formattedDate = `${day}/${month}/${year}`;
+      console.log(`Change it by ${formattedDate}`);
       return true;
     })
     .catch((error) => {
@@ -56,7 +70,8 @@ export default async function handler(
 }
 
 async function gamesRequest(name: string, res: any) {
-  const query = "fields name,cover.url,rating;" + 'search "' + name + '"; limit 50;';
+  const query =
+    "fields name,cover.url,rating;" + 'search "' + name + '"; limit 50;';
   await axios({
     url: "https://api.igdb.com/v4/games/",
     method: "POST",
@@ -80,8 +95,7 @@ async function gamesRequest(name: string, res: any) {
             title: game.name,
             cover,
           };
-        }
-      );
+        });
       res.status(200).json(ret);
     })
     .catch((error) => {
