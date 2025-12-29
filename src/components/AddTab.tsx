@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 import Button from "./Button";
 import Selector from "./Selector";
+import Loading from "./Loading";
 import styles from "../styles/AddTab.module.css";
 import { Category, Item } from "../redux/state";
 import { addItem } from "@/redux/store";
@@ -55,11 +56,11 @@ export default function AddTab({
           `https://topsters4.vercel.app/api/endpoints?category=${category}&name=${search}`
         )
         .then((response) => {
-          console.log(response.data[0].cover);
           setSearchedItems(response.data);
         })
         .catch((error) => {
           console.error(error);
+          setSearchedItems([]);
         })
         .finally(() => {
           setIsSearching(false);
@@ -135,14 +136,18 @@ export default function AddTab({
                 }
               }}
             ></input>
-            <Button onClick={() => searchItems()}>
-              <Image
-                width={10}
-                height={10}
-                className={`${styles.icon} ${isSearching && styles.loading}`}
-                src="/icons/search.svg"
-                alt="Search"
-              ></Image>
+            <Button disabled={!search} onClick={() => searchItems()}>
+              {isSearching ? (
+                <Loading />
+              ) : (
+                <Image
+                  width={10}
+                  height={10}
+                  className={styles.icon}
+                  src="/icons/search.svg"
+                  alt="Search"
+                ></Image>
+              )}
             </Button>
           </div>
         )}

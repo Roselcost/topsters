@@ -69,12 +69,6 @@ html[dark] .icon {
   filter: invert(1) brightness(0.7);
 }
 
-.loading {
-  -webkit-animation: spin 0.5s linear infinite;
-  -moz-animation: spin 0.5s linear infinite;
-  animation: spin 0.5s linear infinite;
-}
-
 .search-button {
   justify-content: center;
   background-color: var(--accentColor3);
@@ -167,21 +161,4 @@ html[dark] .icon {
 .cover img {
   border-radius: 8px;
   border: 1px solid var(--borderColor);
-}
-
-@-moz-keyframes spin {
-  100% {
-    -moz-transform: rotate(360deg);
-  }
-}
-@-webkit-keyframes spin {
-  100% {
-    -webkit-transform: rotate(360deg);
-  }
-}
-@keyframes spin {
-  100% {
-    -webkit-transform: rotate(360deg);
-    transform: rotate(360deg);
-  }
 }
