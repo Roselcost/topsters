@@ -20,6 +20,7 @@ const copy = (targetState: State, sourceState: State) => {
   targetState.showTitles = sourceState.showTitles;
   targetState.rows = sourceState.rows;
   targetState.columns = sourceState.columns;
+  targetState.hideEmpty = sourceState.hideEmpty;
   targetState.backgroundType = sourceState.backgroundType;
   targetState.backgroundColor1 = sourceState.backgroundColor1;
   targetState.backgroundColor2 = sourceState.backgroundColor2;
@@ -42,6 +43,7 @@ const initialState: State = {
   showTitles: true,
   rows: 5,
   columns: 5,
+  hideEmpty: false,
   backgroundType: BackgroundType.color,
   backgroundColor1: "#000000",
   backgroundColor2: "#000000",
@@ -75,6 +77,9 @@ export const stateSlice = createSlice({
     },
     setColumns: (state, value: { payload: number }) => {
       state.columns = value.payload;
+    },
+    setHideEmpty: (state, value: { payload: boolean }) => {
+      state.hideEmpty = value.payload;
     },
     setBackgroundType: (state, value: { payload: BackgroundType }) => {
       state.backgroundType = value.payload;
@@ -221,6 +226,7 @@ export const {
   setShowTitles,
   setRows,
   setColumns,
+  setHideEmpty,
   setBackgroundType,
   setBackgroundColor1,
   setBackgroundColor2,

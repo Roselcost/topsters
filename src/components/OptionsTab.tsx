@@ -31,6 +31,7 @@ import {
   setTextColor,
   setTitle,
   setTitlesPosition,
+  setHideEmpty,
   exportState,
   importState,
   restart,
@@ -50,6 +51,7 @@ export default function OptionsTab({
   const showTitles = useSelector((state: State) => state.showTitles);
   const rows = useSelector((state: State) => state.rows);
   const columns = useSelector((state: State) => state.columns);
+  const hideEmpty = useSelector((state: State) => state.hideEmpty);
   const backgroundType = useSelector((state: State) => state.backgroundType);
   const backgroundColor1 = useSelector(
     (state: State) => state.backgroundColor1
@@ -178,6 +180,33 @@ export default function OptionsTab({
               type="range"
             />
             <span className={styles["range-value"]}>{columns}</span>
+          </div>
+        </div>
+        <div className={styles.input}>
+          <label className={styles["input-label"]}>Hide empty</label>
+          <div className={styles.values}>
+            <Button
+              selected={hideEmpty}
+              onClick={() => dispatch(setHideEmpty(!hideEmpty))}
+            >
+              {hideEmpty ? (
+                <Image
+                  width={10}
+                  height={10}
+                  className={styles.icon}
+                  src="/icons/check.svg"
+                  alt="Check"
+                />
+              ) : (
+                <Image
+                  width={10}
+                  height={10}
+                  className={styles.icon}
+                  src="/icons/cancel.svg"
+                  alt="Cancel"
+                />
+              )}
+            </Button>
           </div>
         </div>
       </div>

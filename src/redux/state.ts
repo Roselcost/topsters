@@ -3,6 +3,7 @@ export type State = {
   showTitles: boolean;
   rows: number;
   columns: number;
+  hideEmpty: boolean;
   backgroundType: BackgroundType;
   backgroundColor1: string;
   backgroundColor2: string;

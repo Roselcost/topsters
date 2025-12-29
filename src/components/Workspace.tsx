@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 interface WorkspaceProps {
   draggingItem: any;
   hoverItem: number;
+  isDownloading: boolean;
   hasData: (item: any) => boolean;
   onDrop: (i: number) => void;
   setHoverItem: (i: number) => void;
@@ -18,6 +19,7 @@ interface WorkspaceProps {
 export default function Workspace({
   draggingItem,
   hoverItem,
+  isDownloading,
   hasData,
   onDrop,
   setHoverItem,
@@ -29,6 +31,7 @@ export default function Workspace({
   const showTitles = useSelector((state: State) => state.showTitles);
   const rows = useSelector((state: State) => state.rows);
   const columns = useSelector((state: State) => state.columns);
+  const hideEmpty = useSelector((state: State) => state.hideEmpty);
   const backgroundType = useSelector((state: State) => state.backgroundType);
   const backgroundColor1 = useSelector(
     (state: State) => state.backgroundColor1
@@ -70,6 +73,8 @@ export default function Workspace({
     const newScale = Math.min(1, widthRatio, heightRatio);
     setScale(newScale);
   };
+
+  const isDragging = draggingItem.index !== -1;
 
   useEffect(() => {
     calculateScale();
@@ -182,6 +187,12 @@ export default function Workspace({
                         titlesPosition === Position.side ? "100px" : "unset"
                       }`,
                       borderRadius: borderRadius,
+                      opacity:
+                        hasData(item) ||
+                        isDragging ||
+                        !(isDownloading || hideEmpty)
+                          ? 1
+                          : 0,
                     }}
                     onDrop={() => onDrop(i)}
                     onDragOver={(e) => {
@@ -198,7 +209,7 @@ export default function Workspace({
                     }}
                     onClick={(e: any) => {
                       if (e?.target?.id !== "remove") {
-                        if (draggingItem.index === -1) {
+                        if (!isDragging) {
                           if (hasData(item)) {
                             setDraggingItem({
                               item: { ...item },
@@ -216,7 +227,6 @@ export default function Workspace({
                     {!hasData(item) && (
                       <div
                         style={{
-                          backgroundColor: `#ccc`,
                           height: "100px",
                           borderRadius: isCircle ? "100%" : borderRadius,
                           boxShadow: `${
@@ -226,10 +236,10 @@ export default function Workspace({
                         }}
                         className={`${styles.cover} ${styles["no-items"]}`}
                       >
-                        <span style={{ color: "black" }}>{i + 1}</span>
+                        <span>{i + 1}</span>
                       </div>
                     )}
-                    {hasData(item) && draggingItem.index === -1 && (
+                    {hasData(item) && !isDragging && (
                       <>
                         <div
                           id="remove"
@@ -248,7 +258,7 @@ export default function Workspace({
                         <div
                           onClick={(e: any) => {
                             if (e?.target?.id !== "remove") {
-                              if (draggingItem.index === -1) {
+                              if (!isDragging) {
                                 if (hasData(item)) {
                                   setDraggingItem({
                                     item: { ...item },

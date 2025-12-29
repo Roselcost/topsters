@@ -195,9 +195,11 @@ export default function Home() {
                 </div>
                 <div>
                   <div
-                    onClick={() => {
+                    onClick={async () => {
                       setIsDownloading(true);
-                      downloadImage(title).then(() => setIsDownloading(false));
+                      await new Promise<void>((r) => requestAnimationFrame(() => r()));
+                      await downloadImage(title);
+                      setIsDownloading(false);
                     }}
                     className={styles.tab}
                   >
@@ -222,6 +224,7 @@ export default function Home() {
                 <Workspace
                   draggingItem={draggingItem}
                   hoverItem={hoverItem}
+                  isDownloading={isDownloading}
                   hasData={hasData}
                   onDrop={onDrop}
                   setHoverItem={setHoverItem}

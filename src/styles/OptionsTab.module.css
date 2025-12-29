@@ -29,6 +29,7 @@
   height: 100%;
   padding: 16px 16px;
   border-right: 1px solid var(--borderColor);
+  text-align: center;
 }
 
 .values {
