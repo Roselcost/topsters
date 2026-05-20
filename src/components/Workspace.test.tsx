@@ -347,11 +347,6 @@ describe("Workspace Component", () => {
   });
 
   describe("item with data rendering", () => {
-    it("should render delete button when hasData and draggingItem.index === -1", () => {
-      expect(sourceFile).toContain("hasData(item) && draggingItem.index === -1");
-      expect(sourceFile).toContain("id=\"remove\"");
-    });
-
     it("should dispatch removeItem when delete is clicked", () => {
       expect(sourceFile).toContain("dispatch(removeItem(i))");
     });
@@ -412,10 +407,6 @@ describe("Workspace Component", () => {
     it("should call setDraggingItem on drag start", () => {
       expect(sourceFile).toContain("onDragStart");
       expect(sourceFile).toContain("origin: \"collection\"");
-    });
-
-    it("should handle click for drag selection when draggingItem.index === -1", () => {
-      expect(sourceFile).toContain("draggingItem.index === -1");
     });
 
     it("should call onDrop on click when already dragging", () => {

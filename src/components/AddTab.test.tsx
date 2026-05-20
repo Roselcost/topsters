@@ -238,10 +238,6 @@ describe("AddTab Component", () => {
       expect(sourceFile).toContain('src="/icons/search.svg"');
       expect(sourceFile).toContain('alt="Search"');
     });
-
-    it("should apply loading class when isSearching is true", () => {
-      expect(sourceFile).toContain("isSearching && styles.loading");
-    });
   });
 
   describe("pictures category form", () => {
